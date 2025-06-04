@@ -9,7 +9,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
       <div className="bg-yellow-300 border-4 border-black rounded-2xl shadow-xl p-8 max-w-xs w-full text-center relative comic-font animate-bounce-in">
         <button
           className="absolute top-2 right-2 text-black hover:text-red-600 text-2xl font-bold"
@@ -20,8 +20,8 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onClose }) => {
         </button>
         <div className="flex flex-col items-center gap-3">
           <span className="text-5xl">🎉</span>
-          <h2 className="text-2xl font-extrabold text-black mb-2 comic-font drop-shadow">Success!</h2>
-          <p className="text-lg font-semibold text-black mb-2">Your comic photo has been saved!</p>
+          <h2 className="text-2xl font-extrabold text-black mb-2 comic-font drop-shadow">Selamat!!</h2>
+          <p className="text-lg font-semibold text-black mb-2">Foto kamu udah disimpen</p>
           <button
             className="mt-4 px-6 py-2 bg-pink-500 border-2 border-black rounded-full shadow hover:bg-pink-600 text-white font-bold text-lg comic-font transition-all"
             onClick={onClose}

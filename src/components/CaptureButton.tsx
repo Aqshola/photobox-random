@@ -18,8 +18,8 @@ const CaptureButton: React.FC<CaptureButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
       className={`
-        px-6 py-3 
-        font-bold text-lg 
+        px-3 py-2 md:px-6 md:py-3 
+        font-bold text-xs md:text-lg 
         rounded-full 
         transform transition-all duration-200
         comic-button
@@ -55,7 +55,6 @@ const CaptureButton: React.FC<CaptureButtonProps> = ({
               <span className="relative">
                 SNAP! Photo {photoCount + 1} of {totalPhotos}
                 {/* Comic-style text shadow effect */}
-                <span className="absolute -top-0.5 -left-0.5 text-purple-800 opacity-30">SNAP! Photo {photoCount + 1} of {totalPhotos}</span>
               </span>
             </span>
           </>

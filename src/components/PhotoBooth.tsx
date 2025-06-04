@@ -21,10 +21,7 @@ const PhotoBooth = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const photoFrameRef = useRef<HTMLDivElement>(null);
-
-  // Initialize webcam
-  useEffect(() => {
-    const startWebcam = async () => {
+ const startWebcam = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
@@ -42,6 +39,9 @@ const PhotoBooth = () => {
       }
     };
 
+  // Initialize webcam
+  useEffect(() => {
+   
     startWebcam();
 
     // Cleanup function to stop webcam when component unmounts
@@ -99,14 +99,16 @@ const PhotoBooth = () => {
     }
   }, [state.isCapturing, state.currentPhotoIndex]);
 
-  const resetPhotoBooth = useCallback(() => {
+  const resetPhotoBooth = () => {
     setState({
-      photos:DEFAULT_STATE_ARRAY,
+      photos: DEFAULT_STATE_ARRAY,
       currentPhotoIndex: 0,
       isCapturing: false,
       isFinalPreview: false,
     });
-  }, []);
+
+    startWebcam()
+  };
 
   const generateFinalImage = async () => {
     if (photoFrameRef.current && state.isFinalPreview) {
@@ -119,7 +121,7 @@ const PhotoBooth = () => {
 
         const finalImageUrl = canvas.toDataURL("image/png");
         const link = document.createElement("a");
-        if(!link) return;
+        if (!link) return;
         link.href = finalImageUrl;
         link.download = `photobooth-${new Date()
           .toISOString()
@@ -134,13 +136,14 @@ const PhotoBooth = () => {
     }
   };
 
-
-
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto p-4">
-      <SuccessModal isOpen={showSuccessModal} onClose={() => setShowSuccessModal(false)} />
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+      />
       <h1 className="text-4xl font-bold mb-6 text-pink-600 text-center">
-        Fun Photo Booth
+        Nomin Booth
       </h1>
 
       {!state.isFinalPreview ? (
@@ -149,34 +152,40 @@ const PhotoBooth = () => {
           <canvas ref={canvasRef} className="hidden"></canvas>
 
           {/* Webcam video feed */}
-          <div className="relative rounded-xl overflow-hidden shadow-xl border-4 border-purple-500 mb-6">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              className="w-full h-auto"
-            />
-            {/* Camera flash effect */}
-            <div
-              className={`camera-flash ${showFlash ? "flash-animation" : ""}`}
-            ></div>
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-              <CaptureButton
-                onClick={capturePhoto}
-                disabled={state.isCapturing}
-                photoCount={state.currentPhotoIndex}
-                totalPhotos={6}
+          <div className="w-full flex justify-center relative">
+            <div className="w-[50%] max-w-[700px] relative aspect-[10/9] rounded-xl  shadow-xl border-4 border-purple-500 mb-6">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-full object-cover"
               />
+
+              {/* Camera flash effect */}
+              <div
+                className={`camera-flash absolute inset-0 pointer-events-none ${
+                  showFlash ? "flash-animation" : ""
+                }`}
+              ></div>
+
             </div>
+              <div className="absolute bottom-3 left-0 right-0 flex justify-center">
+                <CaptureButton
+                  onClick={capturePhoto}
+                  disabled={state.isCapturing}
+                  photoCount={state.currentPhotoIndex}
+                  totalPhotos={6}
+                />
+              </div>
           </div>
 
           {/* Preview of captured photos */}
-          <div className="flex flex-wrap justify-center gap-4 mt-4">
+          <div className="flex flex-wrap justify-center gap-4 mt-14 md:mt-4">
             {state.photos.map((photo, index) => (
               <div
                 key={index}
-                className={`w-24 h-24 rounded-lg overflow-hidden border-2 ${
+                className={`w-[25%] aspect-[10/9] rounded-lg overflow-hidden border-2 ${
                   index === state.currentPhotoIndex
                     ? "border-green-500 animate-pulse"
                     : photo
