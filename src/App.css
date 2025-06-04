@@ -1,0 +1,52 @@
+
+/* Custom animation for camera flash effect */
+@keyframes flash {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.camera-flash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: white;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.flash-animation {
+  animation: flash 0.5s ease-out;
+}
+
+/* Comic-style button */
+.comic-button {
+  position: relative;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+  box-shadow: 0 6px 0 #0005;
+  transform-style: preserve-3d;
+}
+
+.comic-button:active {
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 #0005;
+}
+
+/* Polaroid-style frame for photos */
+.polaroid {
+  background: white;
+  padding: 1rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive container for the photobooth */
+.photobooth-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
