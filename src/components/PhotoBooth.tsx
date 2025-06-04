@@ -5,15 +5,18 @@ import type { PhotoBoothState } from "../types";
 import CaptureButton from "./CaptureButton";
 // @ts-ignore - These modules exist but TypeScript can't find them
 import PhotoFrame from "./PhotoFrame";
+import SuccessModal from "./SuccessModal"; // Import the modal
 
 const PhotoBooth = () => {
-  const DEFAULT_STATE_ARRAY=Array.from({ length: 6 }).fill(null) as any
+  const DEFAULT_STATE_ARRAY = Array.from({ length: 6 }).fill(null) as any;
   const [state, setState] = useState<PhotoBoothState>({
     photos: DEFAULT_STATE_ARRAY,
     currentPhotoIndex: 0,
     isCapturing: false,
     isFinalPreview: false,
   });
+
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -105,7 +108,7 @@ const PhotoBooth = () => {
     });
   }, []);
 
-  const generateFinalImage = useCallback(async () => {
+  const generateFinalImage = async () => {
     if (photoFrameRef.current && state.isFinalPreview) {
       try {
         const canvas = await html2canvas(photoFrameRef.current, {
@@ -114,10 +117,9 @@ const PhotoBooth = () => {
           backgroundColor: null,
         });
 
-
         const finalImageUrl = canvas.toDataURL("image/png");
         const link = document.createElement("a");
-        if(!link) return
+        if(!link) return;
         link.href = finalImageUrl;
         link.download = `photobooth-${new Date()
           .toISOString()
@@ -125,16 +127,18 @@ const PhotoBooth = () => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        setShowSuccessModal(true); // Show modal after download
       } catch (error) {
         console.error("Error generating final image:", error);
       }
     }
-  }, [state.isFinalPreview]);
+  };
 
 
 
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto p-4">
+      <SuccessModal isOpen={showSuccessModal} onClose={() => setShowSuccessModal(false)} />
       <h1 className="text-4xl font-bold mb-6 text-pink-600 text-center">
         Fun Photo Booth
       </h1>
