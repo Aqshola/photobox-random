@@ -16,32 +16,39 @@ const PhotoBooth = () => {
     isFinalPreview: false,
   });
 
+  const [countdown, setCountdown] = useState<number | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const photoFrameRef = useRef<HTMLDivElement>(null);
- const startWebcam = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
-            facingMode: "user",
-          },
-        });
+  const countdownIntervalRef = useRef<number | undefined>(undefined);
 
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-      } catch (error) {
-        console.error("Error accessing webcam:", error);
+  const startWebcam = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          facingMode: "user",
+          aspectRatio: 16 / 9,
+          frameRate: { ideal: 30 },
+        },
+      });
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        // Set video properties for better quality
+        videoRef.current.style.objectFit = "cover";
+        videoRef.current.style.imageRendering = "high-quality";
       }
-    };
+    } catch (error) {
+      console.error("Error accessing webcam:", error);
+    }
+  };
 
   // Initialize webcam
   useEffect(() => {
-   
     startWebcam();
 
     // Cleanup function to stop webcam when component unmounts
@@ -57,27 +64,53 @@ const PhotoBooth = () => {
   const [showFlash, setShowFlash] = useState(false);
 
   const capturePhoto = useCallback(() => {
-    if (videoRef.current && canvasRef.current && !state.isCapturing) {
-      setState((prev) => ({ ...prev, isCapturing: true }));
-
+    if (videoRef.current && canvasRef.current) {
       // Trigger flash animation
       setShowFlash(true);
       setTimeout(() => setShowFlash(false), 500);
 
       const video = videoRef.current;
       const canvas = canvasRef.current;
-      const context = canvas.getContext("2d");
+      const context = canvas.getContext("2d", {
+        alpha: false,
+        desynchronized: true,
+        willReadFrequently: true,
+      });
 
       if (context) {
-        // Set canvas dimensions to match video
-        canvas.width = video.videoWidth;
+        // Set ultra-high-resolution canvas dimensions
+canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
 
-        // Draw video frame to canvas
+
+        // Configure for maximum quality
+        context.imageSmoothingEnabled = true;
+        context.imageSmoothingQuality = "high";
+
+        // Clear previous content
+        context.fillStyle = "#FFFFFF";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw video frame to canvas (flipped horizontally) with sharpening
+        context.translate(canvas.width, 0);
+        context.scale(-1, 1);
+
+        // Apply multiple passes for better quality
+        // First pass - base image
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // Convert canvas to data URL
-        const photoDataUrl = canvas.toDataURL("image/png");
+        // Second pass - sharpen
+        context.globalCompositeOperation = "overlay";
+        context.globalAlpha = 0.1;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Reset context settings
+        context.globalCompositeOperation = "source-over";
+        context.globalAlpha = 1.0;
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
+        // Convert to high-quality data URL with optimal settings
+        const photoDataUrl = canvas.toDataURL("image/jpeg", 1.0);
 
         // Update photos array with new photo
         setState((prev) => {
@@ -91,15 +124,48 @@ const PhotoBooth = () => {
             ...prev,
             photos: newPhotos,
             currentPhotoIndex: newIndex,
-            isCapturing: false,
+            isCapturing: !isFinalPreview,
             isFinalPreview,
           };
         });
       }
     }
-  }, [state.isCapturing, state.currentPhotoIndex]);
+  }, [state.currentPhotoIndex]);
+
+  const startCountdown = useCallback(() => {
+    if (state.currentPhotoIndex >= 6 || state.isCapturing) return;
+
+    setState((prev) => ({ ...prev, isCapturing: true }));
+
+    let timeLeft = 12; // Total time in seconds
+    setCountdown(timeLeft);
+
+    // Take first photo immediately
+    capturePhoto();
+
+    // Set up interval to take remaining photos every 2 seconds
+    countdownIntervalRef.current = setInterval(() => {
+      timeLeft -= 1;
+      setCountdown(timeLeft);
+
+      // Take photo every 2 seconds
+      if (timeLeft % 2 === 0) {
+        capturePhoto();
+      }
+
+      // Check if we've completed the countdown
+      if (timeLeft <= 0) {
+        clearInterval(countdownIntervalRef.current);
+        setCountdown(null);
+      }
+    }, 1000); // Update countdown every second
+  }, [state.currentPhotoIndex, state.isCapturing, capturePhoto]);
 
   const resetPhotoBooth = () => {
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current);
+    }
+    setCountdown(null);
     setState({
       photos: DEFAULT_STATE_ARRAY,
       currentPhotoIndex: 0,
@@ -107,19 +173,22 @@ const PhotoBooth = () => {
       isFinalPreview: false,
     });
 
-    startWebcam()
+    startWebcam();
   };
 
   const generateFinalImage = async () => {
     if (photoFrameRef.current && state.isFinalPreview) {
       try {
         const canvas = await html2canvas(photoFrameRef.current, {
+          scale:2,
           useCORS: true,
-          allowTaint: true,
+          allowTaint: false,
           backgroundColor: null,
         });
 
-        const finalImageUrl = canvas.toDataURL("image/png");
+    
+        // Convert to high-quality JPEG
+        const finalImageUrl = canvas.toDataURL("image/png", 1.0);
         const link = document.createElement("a");
         if (!link) return;
         link.href = finalImageUrl;
@@ -129,7 +198,7 @@ const PhotoBooth = () => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        setShowSuccessModal(true); // Show modal after download
+        setShowSuccessModal(true);
       } catch (error) {
         console.error("Error generating final image:", error);
       }
@@ -153,13 +222,13 @@ const PhotoBooth = () => {
 
           {/* Webcam video feed */}
           <div className="w-full flex justify-center relative">
-            <div className="w-[50%] max-w-[700px] relative aspect-[10/9] rounded-xl  shadow-xl border-4 border-purple-500 mb-6">
+            <div className="w-[50%] max-w-[700px] relative aspect-[10/9] rounded-xl shadow-xl border-4 border-purple-500 mb-6">
               <video
                 ref={videoRef}
                 autoPlay
                 playsInline
                 muted
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover scale-x-[-1]"
               />
 
               {/* Camera flash effect */}
@@ -169,15 +238,23 @@ const PhotoBooth = () => {
                 }`}
               ></div>
 
+              {/* Countdown overlay */}
+              {countdown !== null && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                  <div className="text-white text-base font-bold">
+                    {countdown-2}
+                  </div>
+                </div>
+              )}
             </div>
-              <div className="absolute bottom-3 left-0 right-0 flex justify-center">
-                <CaptureButton
-                  onClick={capturePhoto}
-                  disabled={state.isCapturing}
-                  photoCount={state.currentPhotoIndex}
-                  totalPhotos={6}
-                />
-              </div>
+            <div className="absolute bottom-3 left-0 right-0 flex justify-center">
+              <CaptureButton
+                onClick={startCountdown}
+                disabled={state.isCapturing}
+                photoCount={state.currentPhotoIndex}
+                totalPhotos={6}
+              />
+            </div>
           </div>
 
           {/* Preview of captured photos */}
