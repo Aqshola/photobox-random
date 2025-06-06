@@ -1,6 +1,18 @@
 @import "tailwindcss";
 
-*{
-    border: none;
-    outline: none;
+/* Global reset for borders and outlines */
+*:not([class*="border"]) {
+  border: none !important;
+  outline: none !important;
+}
+
+/* Reset focus outline styles */
+*:focus:not([class*="focus"]) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Preserve border styles for elements that explicitly have border classes */
+[class*="border"] {
+  border-style: solid;
 }
