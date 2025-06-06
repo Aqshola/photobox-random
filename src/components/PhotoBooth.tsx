@@ -79,9 +79,8 @@ const PhotoBooth = () => {
 
       if (context) {
         // Set ultra-high-resolution canvas dimensions
-canvas.width = video.videoWidth;
+        canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
-
 
         // Configure for maximum quality
         context.imageSmoothingEnabled = true;
@@ -179,14 +178,15 @@ canvas.width = video.videoWidth;
   const generateFinalImage = async () => {
     if (photoFrameRef.current && state.isFinalPreview) {
       try {
+          const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+  const scale = isMobile ? 8 : 2;
         const canvas = await html2canvas(photoFrameRef.current, {
-          scale:2,
+          scale: scale,
           useCORS: true,
           allowTaint: false,
           backgroundColor: null,
         });
 
-    
         // Convert to high-quality JPEG
         const finalImageUrl = canvas.toDataURL("image/png", 1.0);
         const link = document.createElement("a");
@@ -242,7 +242,7 @@ canvas.width = video.videoWidth;
               {countdown !== null && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                   <div className="text-white text-base font-bold">
-                    {countdown-2}
+                    {countdown - 2}
                   </div>
                 </div>
               )}
