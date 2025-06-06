@@ -15,9 +15,9 @@ const PhotoFrame = forwardRef<HTMLDivElement, PhotoFrameProps>(({ photos }, ref)
     { top: '32%', left: '18%', width: '30%', height: '27%', zIndex: 10 },
     { top: '61%', left: '18%', width: '30%', height: '27%',  zIndex: 10 },
     // Right side photos (top to bottom) - not used yet but available for future enhancement
-    { top: '3%', right: '18%', width: '30%', height: '27%',  zIndex: 10 },
-    { top: '32%', right: '18%', width: '30%', height: '27%',  zIndex: 10 },
-    { top: '61%', right: '18%', width: '30%', height: '27%', zIndex: 10 },
+    { top: '3%', right: '20%', width: '29%', height: '27%',  zIndex: 10 },
+    { top: '33%', right: '20%', width: '29%', height: '27%',  zIndex: 10 },
+    { top: '61%', right: '20%', width: '29%', height: '27%', zIndex: 10 },
   ];
 
   return (

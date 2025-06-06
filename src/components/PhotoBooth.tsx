@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from "react";
-import html2canvas from "html2canvas-pro";
+import domtoimage from 'dom-to-image-more';
 import type { PhotoBoothState } from "../types";
 // @ts-ignore - These modules exist but TypeScript can't find them
 import CaptureButton from "./CaptureButton";
@@ -31,8 +31,6 @@ const PhotoBooth = () => {
           width: { ideal: 1280 },
           height: { ideal: 720 },
           facingMode: "user",
-          aspectRatio: 16 / 9,
-          frameRate: { ideal: 30 },
         },
       });
 
@@ -40,7 +38,7 @@ const PhotoBooth = () => {
         videoRef.current.srcObject = stream;
         // Set video properties for better quality
         videoRef.current.style.objectFit = "cover";
-        videoRef.current.style.imageRendering = "high-quality";
+        videoRef.current.style.imageRendering = "auto";
       }
     } catch (error) {
       console.error("Error accessing webcam:", error);
@@ -82,13 +80,8 @@ const PhotoBooth = () => {
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
 
-        // Configure for maximum quality
-        context.imageSmoothingEnabled = true;
-        context.imageSmoothingQuality = "high";
+  
 
-        // Clear previous content
-        context.fillStyle = "#FFFFFF";
-        context.fillRect(0, 0, canvas.width, canvas.height);
 
         // Draw video frame to canvas (flipped horizontally) with sharpening
         context.translate(canvas.width, 0);
@@ -98,15 +91,6 @@ const PhotoBooth = () => {
         // First pass - base image
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // Second pass - sharpen
-        context.globalCompositeOperation = "overlay";
-        context.globalAlpha = 0.1;
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // Reset context settings
-        context.globalCompositeOperation = "source-over";
-        context.globalAlpha = 1.0;
-        context.setTransform(1, 0, 0, 1, 0, 0);
 
         // Convert to high-quality data URL with optimal settings
         const photoDataUrl = canvas.toDataURL("image/jpeg", 1.0);
@@ -178,23 +162,34 @@ const PhotoBooth = () => {
   const generateFinalImage = async () => {
     if (photoFrameRef.current && state.isFinalPreview) {
       try {
-          const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
-  const scale = isMobile ? 8 : 2;
-        const canvas = await html2canvas(photoFrameRef.current, {
-          scale: scale,
-          useCORS: true,
-          allowTaint: false,
-          backgroundColor: null,
+        // Apply high-quality settings to the source element
+        const element = photoFrameRef.current;
+        const images = element.getElementsByTagName('img');
+        for (let img of images) {
+          img.style.imageRendering = 'high-quality';
+        }
+
+        // Generate high-quality PNG using dom-to-image
+        // Determine scale based on screen width
+        const isMobile = window.innerWidth <= 768;
+        const scale = isMobile ? 5 : 2;
+        
+        const dataUrl = await domtoimage.toPng(element, {
+          quality: 2.0,
+          width: element.offsetWidth * scale,
+          height: element.offsetHeight * scale,
+          style: {
+            transform: `scale(${scale})`,
+            transformOrigin: 'top left',
+            width: `800px`,
+            height: `800px`
+          }
         });
 
-        // Convert to high-quality JPEG
-        const finalImageUrl = canvas.toDataURL("image/png", 1.0);
+        // Download the image
         const link = document.createElement("a");
-        if (!link) return;
-        link.href = finalImageUrl;
-        link.download = `photobooth-${new Date()
-          .toISOString()
-          .slice(0, 10)}.png`;
+        link.href = dataUrl;
+        link.download = `photobooth-${new Date().toISOString().slice(0, 10)}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
