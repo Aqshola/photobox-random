@@ -11,24 +11,20 @@ const PhotoFrame = forwardRef<HTMLDivElement, PhotoFrameProps>(({ photos }, ref)
   // We'll only use the first 3 slots for now, but we could use all 6 in the future
   const photoPositions = [
     // Left side photos (top to bottom)
-    { top: '5%', left: '18%', width: '30%', height: '27%', zIndex: 10 },
-    { top: '32%', left: '18%', width: '30%', height: '27%', zIndex: 10 },
-    { top: '61%', left: '18%', width: '30%', height: '27%',  zIndex: 10 },
+    { top: '2%', left: '4%', width: '45%', height: '27%', zIndex: 10 },
+    { top: '32%', left: '4%', width: '45%', height: '27%', zIndex: 10 },
+    { top: '61%', left: '4%', width: '45%', height: '27%',  zIndex: 10 },
     // Right side photos (top to bottom) - not used yet but available for future enhancement
-    { top: '3%', right: '20%', width: '29%', height: '27%',  zIndex: 10 },
-    { top: '33%', right: '20%', width: '29%', height: '27%',  zIndex: 10 },
-    { top: '61%', right: '20%', width: '29%', height: '27%', zIndex: 10 },
+    { top: '2.5%', right: '4%', width: '45%', height: '27%',  zIndex: 10 },
+    { top: '33%', right: '4%', width: '45%', height: '27%',  zIndex: 10 },
+    { top: '61%', right: '4%', width: '45%', height: '27%', zIndex: 10 },
   ];
 
   return (
     <div 
       ref={ref} 
-      className="relative mx-auto bg-transparent"
-      style={{ 
-        width: '100%', 
-        maxWidth: '800px',
-        aspectRatio: '1/1',
-      }}
+      className="relative mx-auto  p-0 m-0 w-[400px] flex"
+   
     >
       {/* Frame image */}
       <img 
@@ -36,8 +32,7 @@ const PhotoFrame = forwardRef<HTMLDivElement, PhotoFrameProps>(({ photos }, ref)
         alt="Photo frame" 
         className="w-full h-full object-contain relative z-20"
       />
-      
-      {/* Overlay the photos on the frame */}
+            {/* Overlay the photos on the frame */}
       {photos.map((photo, index) => (
         photo  && (
           <div 
@@ -56,6 +51,8 @@ const PhotoFrame = forwardRef<HTMLDivElement, PhotoFrameProps>(({ photos }, ref)
           </div>
         )
       ))}
+
+   
     </div>
   );
 });
