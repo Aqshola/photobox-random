@@ -21,9 +21,11 @@ const PhotoFrame = forwardRef<HTMLDivElement, PhotoFrameProps>(({ photos }, ref)
   ];
 
   return (
+    <div className='w-fit mx-auto'>
+
     <div 
       ref={ref} 
-      className="relative mx-auto  p-0 m-0 w-[400px] flex"
+      className="relative   p-0 m-0 w-[400px] flex"
    
     >
       {/* Frame image */}
@@ -53,6 +55,7 @@ const PhotoFrame = forwardRef<HTMLDivElement, PhotoFrameProps>(({ photos }, ref)
       ))}
 
    
+    </div>
     </div>
   );
 });

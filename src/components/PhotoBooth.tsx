@@ -172,17 +172,19 @@ const PhotoBooth = () => {
         // Generate high-quality PNG using dom-to-image
         // Determine scale based on screen width
         const isMobile = window.innerWidth <= 768;
-        const scale = isMobile ? 5 : 2;
+        const scale = isMobile ? 5 : 3;
         
+        const w=element.offsetWidth*scale
+        const h=element.offsetHeight*scale
         const dataUrl = await domtoimage.toPng(element, {
           quality: 2.0,
-          width: element.offsetWidth * scale,
-          height: element.offsetHeight * scale,
+          width:w,
+          height: h,
           style: {
             transform: `scale(${scale})`,
             transformOrigin: 'top left',
-            width: `800px`,
-            height: `800px`
+            width: `${w}px`,
+            height: `${h}px`
           }
         });
 
