@@ -11,13 +11,13 @@ const PhotoFrame = forwardRef<HTMLDivElement, PhotoFrameProps>(({ photos }, ref)
   // We'll only use the first 3 slots for now, but we could use all 6 in the future
   const photoPositions = [
     // Left side photos (top to bottom)
-    { top: '2%', left: '4%', width: '45%', height: '27%', zIndex: 10 },
+    { top: '5%', left: '4%', width: '45%', height: '27%', zIndex: 10 },
     { top: '32%', left: '4%', width: '45%', height: '27%', zIndex: 10 },
     { top: '61%', left: '4%', width: '45%', height: '27%',  zIndex: 10 },
     // Right side photos (top to bottom) - not used yet but available for future enhancement
-    { top: '2.5%', right: '4%', width: '45%', height: '27%',  zIndex: 10 },
+    { top: '5%', right: '2%', width: '45%', height: '27%',  zIndex: 10 },
     { top: '33%', right: '4%', width: '45%', height: '27%',  zIndex: 10 },
-    { top: '61%', right: '4%', width: '45%', height: '27%', zIndex: 10 },
+    { top: '60%', right: '4%', width: '45%', height: '27%', zIndex: 10 },
   ];
 
   return (
