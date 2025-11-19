@@ -32,7 +32,7 @@ const PhotoFrame = forwardRef<HTMLDivElement, PhotoFrameProps>(({ photos }, ref)
         <img
           src="/frame.png"
           alt="Photo frame"
-          className="w-full object-containrelative z-20"
+          className="w-full object-contain relative z-20"
         />
         {/* Overlay the photos on the frame */}
         {photos.map((photo, index) => (
@@ -53,7 +53,6 @@ const PhotoFrame = forwardRef<HTMLDivElement, PhotoFrameProps>(({ photos }, ref)
             </div>
           )
         ))}
-
 
       </div>
     </div>
