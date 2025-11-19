@@ -197,6 +197,7 @@ const PhotoBooth = () => {
         document.body.removeChild(link);
         setShowSuccessModal(true);
       } catch (error) {
+        alert(error)
         console.error("Error generating final image:", error);
       }
     }
@@ -209,7 +210,8 @@ const PhotoBooth = () => {
         onClose={() => setShowSuccessModal(false)}
       />
       <h1 className="text-4xl font-bold mb-6 text-pink-600 text-center">
-        Nomin Booth
+        Wind Up with Love
+ Booth
       </h1>
 
       {!state.isFinalPreview ? (
@@ -283,7 +285,7 @@ const PhotoBooth = () => {
           </div>
         </div>
       ) : (
-        <div className="w-full">
+        <div className="w-full bgbl">
           <>
             <PhotoFrame ref={photoFrameRef} photos={state.photos} />
             <div className="flex justify-center mt-6 gap-4">
