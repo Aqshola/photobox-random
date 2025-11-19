@@ -25,7 +25,7 @@ const PhotoFrame = forwardRef<HTMLDivElement, PhotoFrameProps>(({ photos }, ref)
 
     <div 
       ref={ref} 
-      className="relative   p-0 m-0 w-[400px] flex"
+      className="relative   p-0 m-0 md:w-[400px] w-full flex"
    
     >
       {/* Frame image */}
@@ -33,23 +33,22 @@ const PhotoFrame = forwardRef<HTMLDivElement, PhotoFrameProps>(({ photos }, ref)
         src="/frame.png" 
         alt="Photo frame" 
         className="w-full h-full object-contain relative z-20"
+        
       />
             {/* Overlay the photos on the frame */}
       {photos.map((photo, index) => (
         photo  && (
           <div 
             key={index}
-            className="absolute overflow-hidden rounded-md shadow-lg border-2 border-white"
+            className="absolute overflow-hidden rounded-md "
             style={{
               ...photoPositions[index],
               backgroundImage: `url(${photo})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)',
             }}
           >
             {/* Optional decorative elements */}
-            <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-black/20 to-transparent"></div>
           </div>
         )
       ))}
