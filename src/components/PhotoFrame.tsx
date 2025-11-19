@@ -21,11 +21,11 @@ const PhotoFrame = forwardRef<HTMLDivElement, PhotoFrameProps>(({ photos }, ref)
   ];
 
   return (
-    <div className='w-full border-red-400 mx-auto '>
+    <div className='w-full  mx-auto '>
 
       <div
         ref={ref}
-        className="relative p-0 m-0 md:w-[400px] md:mx-auto w-full flex border"
+        className="relative p-0 m-0 md:w-[400px] md:mx-auto w-full flex "
 
       >
         {/* Frame image */}
