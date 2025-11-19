@@ -6,6 +6,7 @@ import CaptureButton from "./CaptureButton";
 // @ts-ignore - These modules exist but TypeScript can't find them
 import PhotoFrame from "./PhotoFrame";
 import SuccessModal from "./SuccessModal"; // Import the modal
+import { toPng } from 'html-to-image'
 
 const PhotoBooth = () => {
   const DEFAULT_STATE_ARRAY = Array.from({ length: 6 }).fill(null) as any;
@@ -80,7 +81,7 @@ const PhotoBooth = () => {
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
 
-  
+
 
 
         // Draw video frame to canvas (flipped horizontally) with sharpening
@@ -162,33 +163,16 @@ const PhotoBooth = () => {
   const generateFinalImage = async () => {
     if (photoFrameRef.current && state.isFinalPreview) {
       try {
-        // Apply high-quality settings to the source element
         const element = photoFrameRef.current;
-        const images = element.getElementsByTagName('img');
-        for (let img of images) {
-          img.style.imageRendering = 'high-quality';
-        }
 
-        // Generate high-quality PNG using dom-to-image
-        // Determine scale based on screen width
         const isMobile = window.innerWidth <= 768;
-        const scale = isMobile ? 5 : 3;
-        
-        const w=element.offsetWidth*scale
-        const h=element.offsetHeight*scale
-        const dataUrl = await domtoimage.toPng(element, {
-          quality: 2.0,
-          width:w,
-          height: h,
-          style: {
-            transform: `scale(${scale})`,
-            transformOrigin: 'top left',
-            width: `${w}px`,
-            height: `${h}px`
-          }
+
+        const dataUrl = await toPng(element, {
+          pixelRatio: isMobile ? 4 : 2,
+          cacheBust: true,
+          skipFonts: false,
         });
 
-        // Download the image
         const link = document.createElement("a");
         link.href = dataUrl;
         link.download = `photobooth-${new Date().toISOString().slice(0, 10)}.png`;
@@ -197,8 +181,7 @@ const PhotoBooth = () => {
         document.body.removeChild(link);
         setShowSuccessModal(true);
       } catch (error) {
-        alert(error)
-        console.error("Error generating final image:", error);
+        console.error("Error generating image:", error);
       }
     }
   };
@@ -211,7 +194,7 @@ const PhotoBooth = () => {
       />
       <h1 className="text-4xl font-bold mb-6 text-pink-600 text-center">
         Wind Up with Love
- Booth
+        Booth
       </h1>
 
       {!state.isFinalPreview ? (
@@ -232,9 +215,8 @@ const PhotoBooth = () => {
 
               {/* Camera flash effect */}
               <div
-                className={`camera-flash absolute inset-0 pointer-events-none ${
-                  showFlash ? "flash-animation" : ""
-                }`}
+                className={`camera-flash absolute inset-0 pointer-events-none ${showFlash ? "flash-animation" : ""
+                  }`}
               ></div>
 
               {/* Countdown overlay */}
@@ -261,13 +243,12 @@ const PhotoBooth = () => {
             {state.photos.map((photo, index) => (
               <div
                 key={index}
-                className={`w-[25%] aspect-[10/9] rounded-lg overflow-hidden border-2 ${
-                  index === state.currentPhotoIndex
+                className={`w-[25%] aspect-[10/9] rounded-lg overflow-hidden border-2 ${index === state.currentPhotoIndex
                     ? "border-green-500 animate-pulse"
                     : photo
-                    ? "border-blue-500"
-                    : "border-gray-300"
-                }`}
+                      ? "border-blue-500"
+                      : "border-gray-300"
+                  }`}
               >
                 {photo ? (
                   <img
