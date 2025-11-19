@@ -266,7 +266,7 @@ const PhotoBooth = () => {
           </div>
         </div>
       ) : (
-        <div className="w-full bgbl">
+        <div className="w-full">
           <>
             <PhotoFrame ref={photoFrameRef} photos={state.photos} />
             <div className="flex justify-center mt-6 gap-4">
