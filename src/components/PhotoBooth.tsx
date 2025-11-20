@@ -236,11 +236,6 @@ const PhotoBooth = () => {
 
         console.log('Image generated, data URL length:', dataUrl.length);
 
-        // Verify the image is not blank
-        if (dataUrl.length < 5000) {
-          throw new Error('Generated image appears to be blank or corrupted');
-        }
-
         // Download the image
         const link = document.createElement("a");
         link.href = dataUrl;
