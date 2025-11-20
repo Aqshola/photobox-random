@@ -5,7 +5,7 @@ import CaptureButton from "./CaptureButton";
 // @ts-ignore - These modules exist but TypeScript can't find them
 import PhotoFrame from "./PhotoFrame";
 import SuccessModal from "./SuccessModal"; // Import the modal
-import html2canvas from "html2canvas";
+import html2canvas from 'html2canvas-pro';
 
 const PhotoBooth = () => {
   const DEFAULT_STATE_ARRAY = Array.from({ length: 6 }).fill(null) as any;
@@ -168,8 +168,7 @@ const PhotoBooth = () => {
       const element = photoFrameRef.current;
 
       // --- PHASE 2: CALCULATE SETTINGS ---
-      const isMobile = window.innerWidth <= 768;
-      const finalScale = isMobile ? 4 : 6;
+      const finalScale = 4
 
       // --- FIX OBJECT-FIT FOR HTML2CANVAS ---
       // Select your images safely in TS
