@@ -1,4 +1,3 @@
-import { objectFit } from 'html2canvas-pro/dist/types/css/property-descriptors/object-fit';
 import { forwardRef } from 'react';
 
 interface PhotoFrameProps {
