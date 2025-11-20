@@ -7,6 +7,7 @@ import CaptureButton from "./CaptureButton";
 import PhotoFrame from "./PhotoFrame";
 import SuccessModal from "./SuccessModal"; // Import the modal
 import { toPng } from 'html-to-image'
+import * as htmlToImage from 'html-to-image';
 
 const PhotoBooth = () => {
   const DEFAULT_STATE_ARRAY = Array.from({ length: 6 }).fill(null) as any;
@@ -159,95 +160,95 @@ const PhotoBooth = () => {
 
     startWebcam();
   };
-  const generateFinalImage = async () => {
-    if (photoFrameRef.current && state.isFinalPreview) {
-      try {
-        const element = photoFrameRef.current;
+  // const generateFinalImage = async () => {
+  //   if (photoFrameRef.current && state.isFinalPreview) {
+  //     try {
+  //       const element = photoFrameRef.current;
 
-        // Wait for ALL images to be fully loaded
-        const images = Array.from(element.getElementsByTagName('img'));
+  //       // Wait for ALL images to be fully loaded
+  //       const images = Array.from(element.getElementsByTagName('img'));
 
-        console.log('Waiting for images to load...', images.length);
+  //       console.log('Waiting for images to load...', images.length);
 
-        await Promise.all(
-          images.map((img, index) => {
-            return new Promise((resolve, reject) => {
-              // If image is already loaded
-              if (img.complete && img.naturalHeight !== 0) {
-                console.log(`Image ${index} already loaded`);
-                resolve(null);
-                return;
-              }
+  //       await Promise.all(
+  //         images.map((img, index) => {
+  //           return new Promise((resolve, reject) => {
+  //             // If image is already loaded
+  //             if (img.complete && img.naturalHeight !== 0) {
+  //               console.log(`Image ${index} already loaded`);
+  //               resolve(null);
+  //               return;
+  //             }
 
-              console.log(`Waiting for image ${index}:`, img.src);
+  //             console.log(`Waiting for image ${index}:`, img.src);
 
-              // Set up load handlers
-              img.onload = () => {
-                console.log(`Image ${index} loaded successfully`);
-                resolve(null);
-              };
+  //             // Set up load handlers
+  //             img.onload = () => {
+  //               console.log(`Image ${index} loaded successfully`);
+  //               resolve(null);
+  //             };
 
-              img.onerror = () => {
-                console.error(`Image ${index} failed to load:`, img.src);
-                reject(new Error(`Failed to load image: ${img.src}`));
-              };
+  //             img.onerror = () => {
+  //               console.error(`Image ${index} failed to load:`, img.src);
+  //               reject(new Error(`Failed to load image: ${img.src}`));
+  //             };
 
-              // Force reload by setting crossOrigin and re-assigning src
-              if (!img.crossOrigin) {
-                img.crossOrigin = 'anonymous';
-              }
-              const currentSrc = img.src;
-              img.src = '';
-              img.src = currentSrc;
-            });
-          })
-        );
+  //             // Force reload by setting crossOrigin and re-assigning src
+  //             if (!img.crossOrigin) {
+  //               img.crossOrigin = 'anonymous';
+  //             }
+  //             const currentSrc = img.src;
+  //             img.src = '';
+  //             img.src = currentSrc;
+  //           });
+  //         })
+  //       );
 
-        console.log('All images loaded, waiting for render...');
+  //       console.log('All images loaded, waiting for render...');
 
-        // Extra delay for iOS to ensure rendering is complete
-        await new Promise(resolve => setTimeout(resolve, 300));
+  //       // Extra delay for iOS to ensure rendering is complete
+  //       await new Promise(resolve => setTimeout(resolve, 300));
 
-        // Apply high-quality settings
-        for (let img of images) {
-          img.style.imageRendering = 'high-quality';
-        }
+  //       // Apply high-quality settings
+  //       for (let img of images) {
+  //         img.style.imageRendering = 'high-quality';
+  //       }
 
-        // Determine scale based on device
-        const isMobile = window.innerWidth <= 768;
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        const scale = 10;
+  //       // Determine scale based on device
+  //       const isMobile = window.innerWidth <= 768;
+  //       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  //       const scale = 10;
 
 
-        const w = element.offsetWidth * scale;
-        const h = element.offsetHeight * scale;
+  //       const w = element.offsetWidth * scale;
+  //       const h = element.offsetHeight * scale;
 
-        const dataUrl = await domtoimage.toPng(element, {
-          quality: 1,
-          width: w,
-          height: h,
-          style: {
-            transform: `scale(${scale})`,
-            transformOrigin: 'top left',
-            width: `${element.offsetWidth}px`,
-            height: `${element.offsetHeight}px`
-          }
-        });
+  //       const dataUrl = await domtoimage.toPng(element, {
+  //         quality: 1,
+  //         width: w,
+  //         height: h,
+  //         style: {
+  //           transform: `scale(${scale})`,
+  //           transformOrigin: 'top left',
+  //           width: `${element.offsetWidth}px`,
+  //           height: `${element.offsetHeight}px`
+  //         }
+  //       });
 
-        console.log('Image generated, data URL length:', dataUrl.length);
+  //       console.log('Image generated, data URL length:', dataUrl.length);
 
-        // Download the image
-        const link = document.createElement("a");
-        link.href = dataUrl;
-        link.download = `photobooth-${new Date().toISOString().slice(0, 10)}.jpg`;
-        link.click();
-        setShowSuccessModal(true);
-      } catch (error) {
-        console.error("Error generating final image:", error);
-        alert(`Failed to generate image: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      }
-    }
-  };
+  //       // Download the image
+  //       const link = document.createElement("a");
+  //       link.href = dataUrl;
+  //       link.download = `photobooth-${new Date().toISOString().slice(0, 10)}.jpg`;
+  //       link.click();
+  //       setShowSuccessModal(true);
+  //     } catch (error) {
+  //       console.error("Error generating final image:", error);
+  //       alert(`Failed to generate image: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  //     }
+  //   }
+  // };
 
 
   // const generateFinalImage = async () => {
@@ -276,6 +277,70 @@ const PhotoBooth = () => {
   //   }
   // };
 
+
+  const generateFinalImage = async () => {
+    // Ensure the element exists and we are in the right state
+    if (!photoFrameRef.current) return;
+
+    try {
+      const element = photoFrameRef.current;
+
+      // --- PHASE 1: WAIT FOR IMAGES ---
+      // We manually ensure every image inside the frame is fully loaded
+      const images = Array.from(element.getElementsByTagName('img'));
+
+      await Promise.all(
+        images.map((img) => {
+          if (img.complete && img.naturalHeight !== 0) return Promise.resolve();
+
+          return new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve; // Resolve even on error to prevent hanging
+          });
+        })
+      );
+
+      // Small safety delay for iOS rendering engine to settle layout
+      await new Promise((resolve) => setTimeout(resolve, 250));
+
+      // --- PHASE 2: CALCULATE SETTINGS ---
+      // iOS Canvas Memory Limit Fix:
+      // Mobile devices cannot handle huge canvases. 
+      // We use a scale of 2 (Retina) for mobile, and 3 for desktop.
+      // Your previous scale of 10 was causing the white screen crash.
+      const isMobile = window.innerWidth <= 768;
+      const finalScale = isMobile ? 2 : 3;
+
+      console.log(`Generating image with scale: ${finalScale}`);
+
+      // --- PHASE 3: GENERATE ---
+      const dataUrl = await htmlToImage.toPng(element, {
+        quality: 0.95,
+        pixelRatio: finalScale, // Let the library handle the scaling math
+        cacheBust: true,      // Forces the browser to re-fetch internal images to avoid stale cache
+        skipAutoScale: true,  // Prevents internal resizing logic that breaks iOS
+        style: {
+          // Explicitly force high-quality rendering during capture
+          imageRendering: 'high-quality',
+        }
+      });
+
+      // --- PHASE 4: DOWNLOAD ---
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = `photobooth-${new Date().toISOString().slice(0, 10)}.png`;
+      document.body.appendChild(link); // Required for Firefox/some mobile browsers
+      link.click();
+      document.body.removeChild(link); // Clean up
+
+      // Show your success modal here
+      // setShowSuccessModal(true);
+
+    } catch (error) {
+      console.error("Error generating final image:", error);
+      alert("We couldn't generate your image. Please try again.");
+    }
+  };
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto p-4">
       <SuccessModal
