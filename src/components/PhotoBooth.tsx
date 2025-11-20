@@ -216,7 +216,7 @@ const PhotoBooth = () => {
         // Determine scale based on device
         const isMobile = window.innerWidth <= 768;
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        const scale = 1;
+        const scale = 10;
 
 
         const w = element.offsetWidth * scale;
