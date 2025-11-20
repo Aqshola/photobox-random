@@ -8,20 +8,21 @@ const PhotoFrame = forwardRef<HTMLDivElement, PhotoFrameProps>(({ photos }, ref)
 
   const photoPositions = [
     // Left side
-    { top: '5%', left: '1%', width: '60%', zIndex: 10, },
-    { top: '33%', left: '1%', width: '60%', zIndex: 10 },
-    { top: '61%', left: '1%', width: '60%', zIndex: 10 },
-    // Right side (future use)
-    { top: '5%', right: '-6%', width: '59%', zIndex: 10 },
-    { top: '33%', right: '-6%', width: '59%', height: '27%', zIndex: 10 },
-    { top: '60%', right: '-6%', width: '59%', height: '27%', zIndex: 10 },
+    { top: '5%', left: '4%', width: '45%', height: '27%', zIndex: 10 },
+    { top: '32%', left: '4%', width: '45%', height: '27%', zIndex: 10 },
+    { top: '61%', left: '4%', width: '45%', height: '27%', zIndex: 10 },
+    // Right side photos (top to bottom) - not used yet but available for future enhancement
+    { top: '5%', right: '2%', width: '45%', height: '27%', zIndex: 10 },
+    { top: '33%', right: '4%', width: '45%', height: '27%', zIndex: 10 },
+    { top: '60%', right: '4%', width: '45%', height: '27%', zIndex: 10 },
   ];
 
   return (
     <div className='w-fit mx-auto'>
       <div
         ref={ref}
-        className="relative p-0 m-0 md:w-[400px] w-full flex overflow-hidden"
+        className="relative overflow-hidden w-full "
+        style={{ aspectRatio: "2 / 3" }}
       >
         <img
           src="/frame.png"
@@ -32,16 +33,16 @@ const PhotoFrame = forwardRef<HTMLDivElement, PhotoFrameProps>(({ photos }, ref)
         {photos.map((photo, index) => (
           photo && (
             <div
-              key={photo}
-              className="absolute"
-              style={{ ...photoPositions[index] }}
+              key={index}
+              className="absolute overflow-hidden"
+              style={{
+                ...photoPositions[index],
+              }}
             >
-              {/* We use IMG here instead of background-image for better export stability */}
               <img
                 src={photo}
-                alt={`Slot ${index}`}
-
-
+                alt={`photo-${index}`}
+                className="w-full h-full object-cover"
               />
             </div>
           )

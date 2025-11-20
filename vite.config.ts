@@ -8,6 +8,7 @@ import baasicSSL from '@vitejs/plugin-basic-ssl'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
-    allowedHosts: ['29dce8c6d2f3.ngrok-free.app']
-  }
+    allowedHosts: ['leerily-nonamendable-rema.ngrok-free.dev']
+  },
+ 
 })

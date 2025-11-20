@@ -170,11 +170,20 @@ const PhotoBooth = () => {
       // --- PHASE 2: CALCULATE SETTINGS ---
       const isMobile = window.innerWidth <= 768;
       const finalScale = isMobile ? 4 : 6;
+
+      // --- FIX OBJECT-FIT FOR HTML2CANVAS ---
+      // Select your images safely in TS
+      
+
+    
       // --- PHASE 3: GENERATE (html2canvas) ---
       const canvas = await html2canvas(element, {
         scale: finalScale,        // replaces pixelRatio
+      
       });
 
+
+    
       canvas.toBlob((blob) => {
         if (!blob) return;
         const url = URL.createObjectURL(blob);
